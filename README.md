@@ -1,98 +1,132 @@
-# PRD — 스터디 출석 체크 및 커뮤니티 앱 (출석체크잇 / StudyPing)
+# StudyPing (출석체크잇)
 
-## 1. 프로젝트 개요
+스터디 출석 체크 및 커뮤니티 앱
 
-- **프로젝트명**: 출석체크잇 (StudyPing)
-- **목표**: 스터디 그룹원들이 매일 출석을 체크하고, 간단한 소통을 할 수 있는 모바일 중심 웹 앱
-- **핵심 가치**: 출석 기반의 꾸준한 학습 습관 형성, 커뮤니티를 통한 상호 동기 부여
+## 🚀 시작하기
 
----
+### 1. 프로젝트 클론
 
-## 2. 주요 기능 (Requirements)
+```bash
+git clone <repository-url>
+cd study-ping
+```
 
-### 2.1 스터디 생성 및 참여
+### 2. 의존성 설치
 
-- 유저는 로그인 후 스터디를 **생성**할 수 있다.
-- 스터디 **참여**는 초대 링크 또는 코드 기반으로 가능하다.
-- 스터디 정보: 이름, 설명, 최대 인원, 대표 이미지.
+```bash
+npm install
+```
 
-### 2.2 출석 체크
+### 3. 환경 변수 설정
 
-- 유저는 하루에 한 번 **“출석”** 버튼을 누를 수 있다.
-- 출석은 해당 날짜에 **1회**만 가능하다.
-- 출석 현황은 스터디 페이지에서 확인할 수 있다.
-- **출석률** = 총 출석일 ÷ 총 참여일 × 100
+`.env.example` 파일을 복사하여 `.env` 파일을 생성하세요:
 
-### 2.3 커뮤니티 / 댓글
+```bash
+cp .env.example .env
+```
 
-- **당일 출석**한 사람만 “오늘의 한마디” 댓글을 작성할 수 있다.
-- 댓글은 **실시간**으로 반영된다 (Supabase Realtime).
-- 작성한 댓글은 **수정/삭제**할 수 있다.
+`.env` 파일에서 다음 값들을 설정하세요:
 
-### 2.4 공지 기능
+#### 필수 설정 (Supabase)
 
-- **스터디장**은 공지를 등록·수정할 수 있다.
-- 공지는 목록 상단에 **고정** 표시된다.
-- 모든 참여자에게 **실시간 알림**이 전송된다.
+1. [Supabase](https://app.supabase.com)에 가입하고 새 프로젝트를 생성
+2. 프로젝트 설정에서 다음 정보를 복사:
+   - `VITE_SUPABASE_URL`: 프로젝트 URL
+   - `VITE_SUPABASE_ANON_KEY`: Anonymous key
 
-### 2.5 마이페이지
+```env
+VITE_SUPABASE_URL=https://your-project-id.supabase.co
+VITE_SUPABASE_ANON_KEY=your-anon-key-here
+```
 
-- 내가 **참여 중인 스터디 목록**을 확인할 수 있다.
-- 스터디별 **출석 통계** (일자별 히트맵, 월간 차트) 제공.
-- 내 **전체 출석률** 확인 가능.
+### 4. 개발 서버 실행
 
-### 2.6 반응형 & PWA
+```bash
+npm run dev
+```
 
-- **모바일 최적화** 레이아웃.
-- **홈 화면 추가**(PWA 설치) 지원.
-- **푸시 알림**(추후) 기능 확장 가능.
+앱이 http://localhost:5173에서 실행됩니다.
 
----
+## 📁 프로젝트 구조
 
-## 3. 인증 및 보안
+```
+src/
+├── components/          # 재사용 가능한 컴포넌트
+│   ├── ui/             # 기본 UI 컴포넌트 (Button, Input 등)
+│   ├── auth/           # 인증 관련 컴포넌트
+│   ├── study/          # 스터디 관련 컴포넌트
+│   ├── attendance/     # 출석 관련 컴포넌트
+│   └── community/      # 커뮤니티 관련 컴포넌트
+├── pages/              # 페이지 컴포넌트
+├── hooks/              # 커스텀 훅
+├── services/           # API 서비스
+├── types/              # TypeScript 타입 정의
+├── utils/              # 유틸리티 함수
+├── constants/          # 상수 정의
+└── store/              # 상태 관리
+```
 
-- **Supabase Auth** (Email/Password + Google OAuth).
-- **RLS**(Row Level Security)로 유저별 데이터 접근 제한.
-- 출석 기능은 **로그인한 유저**만 사용 가능.
+## 🛠 기술 스택
 
----
+- **Frontend**: React 19, TypeScript, Vite
+- **Styling**: Tailwind CSS
+- **Routing**: React Router
+- **Backend**: Supabase (Auth, Database, Realtime)
+- **State Management**: React Hooks (+ Zustand 예정)
 
-## 4. 기술 스택
+## 📋 주요 기능
 
-| 영역           | 기술                                         |
-| -------------- | -------------------------------------------- |
-| **Frontend**   | React • Vite • TypeScript • Tailwind CSS     |
-| **Backend**    | Supabase (Auth, Database, Realtime, Storage) |
-| **State 관리** | React Query 또는 Zustand                     |
-| **Chart**      | Chart.js 혹은 Recharts                       |
-| **배포**       | Vercel                                       |
-| **PWA**        | manifest.json, Service Worker                |
+- 🔐 **인증**: 이메일/비밀번호, Google OAuth
+- 📚 **스터디 관리**: 생성, 참여, 관리
+- ✅ **출석 체크**: 일일 출석, 통계, 히트맵
+- 💬 **커뮤니티**: 댓글, 공지사항
+- 📊 **통계**: 출석률, 연속 출석일
+- 📱 **PWA**: 모바일 최적화, 오프라인 지원
 
----
+## 🔧 개발 가이드
 
-## 5. 데이터베이스 구조 (요약)
+### 빌드
 
-| 테이블            | 필드(주요)                                          | 설명               |
-| ----------------- | --------------------------------------------------- | ------------------ |
-| **users**         | id, name, email, created_at                         | 사용자 정보        |
-| **studies**       | id, name, description, owner_id, code, image_url    | 스터디 메타        |
-| **study_members** | id, study_id, user_id, joined_at                    | 스터디 참여자      |
-| **attendances**   | id, study_id, user_id, date, comment                | 출석 기록 & 한마디 |
-| **announcements** | id, study_id, title, content, created_at, author_id | 공지               |
+```bash
+npm run build
+```
 
----
+### 린트
 
-## 6. MVP 범위
+```bash
+npm run lint
+```
 
-- 로그인/회원가입 (이메일 인증)
-- 스터디 **생성 / 참여**
-- **출석** 버튼 기능
-- 당일 출석 목록 및 **댓글**
-- **공지** 작성 및 보기
-- (확장) 마이페이지 기본 통계
-- 모바일 **PWA** 적용
+### 타입 체크
 
----
+```bash
+npm run type-check
+```
 
-**Prepared by**: Seoyoung Choi  
-**Last Updated**: 2025‑06‑19
+### 미리보기
+
+```bash
+npm run preview
+```
+
+## 🚨 문제 해결
+
+### Supabase 연결 오류
+
+1. `.env` 파일이 올바르게 설정되었는지 확인
+2. Supabase 프로젝트가 활성화되어 있는지 확인
+3. API URL과 Key가 정확한지 확인
+
+### 개발 모드 실행
+
+Supabase 설정 없이도 개발 모드로 실행 가능합니다:
+
+```bash
+# 환경 변수 없이 실행 (Mock 데이터 사용)
+npm run dev
+```
+
+## 📞 지원
+
+문제가 발생하면 이슈를 등록해주세요.
+
