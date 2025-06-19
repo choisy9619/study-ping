@@ -7,3 +7,4 @@ export * from './useCommunity';
 export * from './useLocalStorage';
 export * from './useDebounce';
 export * from './useIntersectionObserver';
+export * from './useNavigate';

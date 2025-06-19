@@ -1,5 +1,6 @@
 // 페이지 컴포넌트들
 
+export { HomePage } from './HomePage';
 export { LoginPage } from './LoginPage';
 export { DashboardPage } from './DashboardPage';
 export { NotFoundPage } from './NotFoundPage';

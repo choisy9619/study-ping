@@ -1,14 +1,14 @@
 // 로그인 페이지
 
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { Button, Input, Card } from '../components/ui';
-import { useAuth } from '../hooks';
+import { Link } from 'react-router-dom';
+import { Button, Input, Card } from '../components';
+import { useAuth, useNavigate } from '../hooks';
 import { validateEmail } from '../utils';
 import { ROUTES } from '../constants';
 
 export const LoginPage: React.FC = () => {
-  const navigate = useNavigate();
+  const { goToAfterLogin } = useNavigate();
   const { login, isLoading } = useAuth();
 
   const [formData, setFormData] = useState({
@@ -54,7 +54,7 @@ export const LoginPage: React.FC = () => {
 
     try {
       await login(formData);
-      navigate(ROUTES.DASHBOARD);
+      goToAfterLogin(); // 로그인 후 원래 페이지로 이동
     } catch (error: any) {
       setErrors({ submit: error.message || '로그인에 실패했습니다.' });
     }
