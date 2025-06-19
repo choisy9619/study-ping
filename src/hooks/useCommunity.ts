@@ -1,7 +1,7 @@
 // 커뮤니티 관련 커스텀 훅
 
-import { useState, useEffect } from 'react'
-import { 
+import { useState, useEffect } from 'react';
+import {
   createComment,
   getDailyComments,
   updateComment,
@@ -10,74 +10,74 @@ import {
   getStudyAnnouncements,
   updateAnnouncement,
   deleteAnnouncement,
-  toggleAnnouncementPin
-} from '../services'
+  toggleAnnouncementPin,
+} from '../services';
 import type {
   DailyComments,
   AnnouncementList,
   CreateCommentRequest,
   UpdateCommentRequest,
   CreateAnnouncementRequest,
-  UpdateAnnouncementRequest
-} from '../types'
+  UpdateAnnouncementRequest,
+} from '../types';
 
 interface UseDailyCommentsReturn {
-  dailyComments: DailyComments | null
-  isLoading: boolean
-  error: string | null
-  refetch: () => Promise<void>
-  addComment: (content: string) => Promise<void>
-  editComment: (commentId: string, content: string) => Promise<void>
-  removeComment: (commentId: string) => Promise<void>
+  dailyComments: DailyComments | null;
+  isLoading: boolean;
+  error: string | null;
+  refetch: () => Promise<void>;
+  addComment: (content: string) => Promise<void>;
+  editComment: (commentId: string, content: string) => Promise<void>;
+  removeComment: (commentId: string) => Promise<void>;
 }
 
 /**
  * 특정 날짜의 댓글 관리 훅
  */
 export const useDailyComments = (studyId: string, date: string): UseDailyCommentsReturn => {
-  const [dailyComments, setDailyComments] = useState<DailyComments | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const [dailyComments, setDailyComments] = useState<DailyComments | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchComments = async () => {
     try {
-      setIsLoading(true)
-      setError(null)
-      const data = await getDailyComments(studyId, date)
-      setDailyComments(data)
+      setIsLoading(true);
+      setError(null);
+      const data = await getDailyComments(studyId, date);
+      setDailyComments(data);
     } catch (err: any) {
-      setError(err.message || '댓글을 불러오는데 실패했습니다.')
+      setError(err.message || '댓글을 불러오는데 실패했습니다.');
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   useEffect(() => {
     if (studyId && date) {
-      fetchComments()
+      fetchComments();
     }
-  }, [studyId, date])
+  }, [studyId, date]);
 
   const addComment = async (content: string) => {
     const request: CreateCommentRequest = {
       study_id: studyId,
       content,
-      date
-    }
-    await createComment(request)
-    await fetchComments() // 댓글 목록 새로고침
-  }
+      date,
+    };
+    await createComment(request);
+    await fetchComments(); // 댓글 목록 새로고침
+  };
 
   const editComment = async (commentId: string, content: string) => {
-    const updates: UpdateCommentRequest = { content }
-    await updateComment(commentId, updates)
-    await fetchComments() // 댓글 목록 새로고침
-  }
+    const updates: UpdateCommentRequest = { content };
+    await updateComment(commentId, updates);
+    await fetchComments(); // 댓글 목록 새로고침
+  };
 
   const removeComment = async (commentId: string) => {
-    await deleteComment(commentId)
-    await fetchComments() // 댓글 목록 새로고침
-  }
+    await deleteComment(commentId);
+    await fetchComments(); // 댓글 목록 새로고침
+  };
 
   return {
     dailyComments,
@@ -86,67 +86,67 @@ export const useDailyComments = (studyId: string, date: string): UseDailyComment
     refetch: fetchComments,
     addComment,
     editComment,
-    removeComment
-  }
-}
+    removeComment,
+  };
+};
 
 interface UseAnnouncementsReturn {
-  announcements: AnnouncementList | null
-  isLoading: boolean
-  error: string | null
-  refetch: () => Promise<void>
-  addAnnouncement: (data: CreateAnnouncementRequest) => Promise<void>
-  editAnnouncement: (announcementId: string, updates: UpdateAnnouncementRequest) => Promise<void>
-  removeAnnouncement: (announcementId: string) => Promise<void>
-  togglePin: (announcementId: string) => Promise<void>
+  announcements: AnnouncementList | null;
+  isLoading: boolean;
+  error: string | null;
+  refetch: () => Promise<void>;
+  addAnnouncement: (data: CreateAnnouncementRequest) => Promise<void>;
+  editAnnouncement: (announcementId: string, updates: UpdateAnnouncementRequest) => Promise<void>;
+  removeAnnouncement: (announcementId: string) => Promise<void>;
+  togglePin: (announcementId: string) => Promise<void>;
 }
 
 /**
  * 스터디 공지사항 관리 훅
  */
 export const useAnnouncements = (studyId: string): UseAnnouncementsReturn => {
-  const [announcements, setAnnouncements] = useState<AnnouncementList | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const [announcements, setAnnouncements] = useState<AnnouncementList | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchAnnouncements = async () => {
     try {
-      setIsLoading(true)
-      setError(null)
-      const data = await getStudyAnnouncements(studyId)
-      setAnnouncements(data)
+      setIsLoading(true);
+      setError(null);
+      const data = await getStudyAnnouncements(studyId);
+      setAnnouncements(data);
     } catch (err: any) {
-      setError(err.message || '공지사항을 불러오는데 실패했습니다.')
+      setError(err.message || '공지사항을 불러오는데 실패했습니다.');
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   useEffect(() => {
     if (studyId) {
-      fetchAnnouncements()
+      fetchAnnouncements();
     }
-  }, [studyId])
+  }, [studyId]);
 
   const addAnnouncement = async (data: CreateAnnouncementRequest) => {
-    await createAnnouncement(data)
-    await fetchAnnouncements() // 공지사항 목록 새로고침
-  }
+    await createAnnouncement(data);
+    await fetchAnnouncements(); // 공지사항 목록 새로고침
+  };
 
   const editAnnouncement = async (announcementId: string, updates: UpdateAnnouncementRequest) => {
-    await updateAnnouncement(announcementId, updates)
-    await fetchAnnouncements() // 공지사항 목록 새로고침
-  }
+    await updateAnnouncement(announcementId, updates);
+    await fetchAnnouncements(); // 공지사항 목록 새로고침
+  };
 
   const removeAnnouncement = async (announcementId: string) => {
-    await deleteAnnouncement(announcementId)
-    await fetchAnnouncements() // 공지사항 목록 새로고침
-  }
+    await deleteAnnouncement(announcementId);
+    await fetchAnnouncements(); // 공지사항 목록 새로고침
+  };
 
   const togglePin = async (announcementId: string) => {
-    await toggleAnnouncementPin(announcementId)
-    await fetchAnnouncements() // 공지사항 목록 새로고침
-  }
+    await toggleAnnouncementPin(announcementId);
+    await fetchAnnouncements(); // 공지사항 목록 새로고침
+  };
 
   return {
     announcements,
@@ -156,17 +156,17 @@ export const useAnnouncements = (studyId: string): UseAnnouncementsReturn => {
     addAnnouncement,
     editAnnouncement,
     removeAnnouncement,
-    togglePin
-  }
-}
+    togglePin,
+  };
+};
 
 interface UseCommentFormReturn {
-  content: string
-  setContent: (content: string) => void
-  isSubmitting: boolean
-  canSubmit: boolean
-  submit: () => Promise<void>
-  reset: () => void
+  content: string;
+  setContent: (content: string) => void;
+  isSubmitting: boolean;
+  canSubmit: boolean;
+  submit: () => Promise<void>;
+  reset: () => void;
 }
 
 /**
@@ -176,26 +176,28 @@ export const useCommentForm = (
   onSubmit: (content: string) => Promise<void>,
   canComment: boolean = true
 ): UseCommentFormReturn => {
-  const [content, setContent] = useState('')
-  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [content, setContent] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const canSubmit = content.trim().length > 0 && canComment && !isSubmitting
+  const canSubmit = content.trim().length > 0 && canComment && !isSubmitting;
 
   const submit = async () => {
-    if (!canSubmit) return
+    if (!canSubmit) {
+      return;
+    }
 
     try {
-      setIsSubmitting(true)
-      await onSubmit(content.trim())
-      setContent('') // 성공시 폼 리셋
+      setIsSubmitting(true);
+      await onSubmit(content.trim());
+      setContent(''); // 성공시 폼 리셋
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
+  };
 
   const reset = () => {
-    setContent('')
-  }
+    setContent('');
+  };
 
   return {
     content,
@@ -203,21 +205,21 @@ export const useCommentForm = (
     isSubmitting,
     canSubmit,
     submit,
-    reset
-  }
-}
+    reset,
+  };
+};
 
 interface UseAnnouncementFormReturn {
   formData: {
-    title: string
-    content: string
-    is_pinned: boolean
-  }
-  updateField: (field: string, value: any) => void
-  isSubmitting: boolean
-  canSubmit: boolean
-  submit: () => Promise<void>
-  reset: () => void
+    title: string;
+    content: string;
+    is_pinned: boolean;
+  };
+  updateField: (field: string, value: any) => void;
+  isSubmitting: boolean;
+  canSubmit: boolean;
+  submit: () => Promise<void>;
+  reset: () => void;
 }
 
 /**
@@ -230,42 +232,42 @@ export const useAnnouncementForm = (
   const [formData, setFormData] = useState({
     title: '',
     content: '',
-    is_pinned: false
-  })
-  const [isSubmitting, setIsSubmitting] = useState(false)
+    is_pinned: false,
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const updateField = (field: string, value: any) => {
-    setFormData(prev => ({ ...prev, [field]: value }))
-  }
+    setFormData(prev => ({ ...prev, [field]: value }));
+  };
 
-  const canSubmit = formData.title.trim().length > 0 && 
-                   formData.content.trim().length > 0 && 
-                   !isSubmitting
+  const canSubmit = formData.title.trim().length > 0 && formData.content.trim().length > 0 && !isSubmitting;
 
   const submit = async () => {
-    if (!canSubmit) return
+    if (!canSubmit) {
+      return;
+    }
 
     try {
-      setIsSubmitting(true)
+      setIsSubmitting(true);
       await onSubmit({
         study_id: studyId,
         title: formData.title.trim(),
         content: formData.content.trim(),
-        is_pinned: formData.is_pinned
-      })
-      reset() // 성공시 폼 리셋
+        is_pinned: formData.is_pinned,
+      });
+      reset(); // 성공시 폼 리셋
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
+  };
 
   const reset = () => {
     setFormData({
       title: '',
       content: '',
-      is_pinned: false
-    })
-  }
+      is_pinned: false,
+    });
+  };
 
   return {
     formData,
@@ -273,6 +275,6 @@ export const useAnnouncementForm = (
     isSubmitting,
     canSubmit,
     submit,
-    reset
-  }
-}
+    reset,
+  };
+};

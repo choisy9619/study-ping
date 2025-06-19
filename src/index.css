@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 /* 기본 스타일 재설정 */
 html {
@@ -136,10 +136,15 @@ body {
 }
 
 @keyframes bounceSoft {
-  0%, 20%, 53%, 80%, 100% {
-    transform: translate3d(0,0,0);
+  0%,
+  20%,
+  53%,
+  80%,
+  100% {
+    transform: translate3d(0, 0, 0);
   }
-  40%, 43% {
+  40%,
+  43% {
     transform: translate3d(0, -5px, 0);
   }
   70% {
