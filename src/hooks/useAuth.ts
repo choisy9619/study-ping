@@ -1,7 +1,8 @@
 // 인증 관련 커스텀 훅
 
 import { useState, useEffect } from 'react';
-import { login, signup, logout, getCurrentUser, onAuthStateChange, updateProfile } from '../services';
+import { login, signup, logout, onAuthStateChange, updateProfile, getCurrentUser } from '../services';
+
 import type { User, LoginCredentials, SignupCredentials } from '../types';
 
 interface UseAuthReturn {

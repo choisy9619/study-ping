@@ -1,6 +1,7 @@
 // 스터디 관련 API 서비스
 
 import { supabase } from './supabase';
+import { getCurrentUser } from './auth';
 import type {
   Study,
   StudyWithMembers,
@@ -15,9 +16,7 @@ import { generateStudyCode } from '../utils';
  * 스터디 생성
  */
 export const createStudy = async (data: CreateStudyRequest): Promise<Study> => {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getCurrentUser();
   if (!user) throw new Error('로그인이 필요합니다.');
 
   const studyData = {
@@ -41,9 +40,7 @@ export const createStudy = async (data: CreateStudyRequest): Promise<Study> => {
  * 내가 참여한 스터디 목록 가져오기
  */
 export const getMyStudies = async (): Promise<StudyWithMembers[]> => {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getCurrentUser();
   if (!user) throw new Error('로그인이 필요합니다.');
 
   const { data, error } = await supabase
@@ -79,9 +76,7 @@ export const getMyStudies = async (): Promise<StudyWithMembers[]> => {
  * 스터디 상세 정보 가져오기
  */
 export const getStudyById = async (studyId: string): Promise<StudyWithMembers> => {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getCurrentUser();
 
   const { data, error } = await supabase
     .from('studies')
@@ -114,9 +109,7 @@ export const getStudyById = async (studyId: string): Promise<StudyWithMembers> =
  * 스터디 참여
  */
 export const joinStudy = async (request: JoinStudyRequest): Promise<Study> => {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getCurrentUser();
   if (!user) throw new Error('로그인이 필요합니다.');
 
   // 스터디 코드로 스터디 찾기
@@ -165,9 +158,7 @@ const addStudyMember = async (studyId: string, userId: string, role: 'owner' | '
  * 스터디 업데이트
  */
 export const updateStudy = async (studyId: string, updates: UpdateStudyRequest): Promise<Study> => {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getCurrentUser();
   if (!user) throw new Error('로그인이 필요합니다.');
 
   // 권한 확인 (스터디 소유자만 가능)
@@ -192,9 +183,7 @@ export const updateStudy = async (studyId: string, updates: UpdateStudyRequest):
  * 스터디 탈퇴
  */
 export const leaveStudy = async (studyId: string): Promise<void> => {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getCurrentUser();
   if (!user) throw new Error('로그인이 필요합니다.');
 
   // 스터디 소유자는 탈퇴할 수 없음
@@ -222,9 +211,7 @@ export const leaveStudy = async (studyId: string): Promise<void> => {
  * 스터디 삭제 (소유자만)
  */
 export const deleteStudy = async (studyId: string): Promise<void> => {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getCurrentUser();
   if (!user) throw new Error('로그인이 필요합니다.');
 
   // 권한 확인
@@ -248,9 +235,7 @@ export const deleteStudy = async (studyId: string): Promise<void> => {
  * 새로운 스터디 코드 생성
  */
 export const regenerateStudyCode = async (studyId: string): Promise<string> => {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getCurrentUser();
   if (!user) throw new Error('로그인이 필요합니다.');
 
   // 권한 확인

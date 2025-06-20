@@ -10,6 +10,9 @@ export const ROUTES = {
   HOME: '/',
   DASHBOARD: '/dashboard',
 
+  // 개발
+  DEV_CHECK: '/dev-check',
+
   // 스터디
   STUDIES: '/studies',
   STUDY_DETAIL: '/studies/:id',

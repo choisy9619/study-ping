@@ -9,6 +9,7 @@ import {
   LoginPage,
   DashboardPage,
   NotFoundPage,
+  DevCheckPage,
   // TODO: 향후 추가될 페이지들
   // SignupPage,
   // StudyDetailPage,
@@ -26,6 +27,9 @@ export function AppRouter() {
       <Routes>
         {/* 홈 라우트 (누구나 접근 가능) */}
         <Route path={ROUTES.HOME} element={<HomePage />} />
+
+        {/* 개발 체크 페이지 (누구나 접근 가능) */}
+        <Route path={ROUTES.DEV_CHECK} element={<DevCheckPage />} />
 
         {/* 인증 라우트들 (로그인한 사용자는 접근 불가) */}
         <Route

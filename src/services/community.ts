@@ -1,6 +1,7 @@
 // 커뮤니티 관련 API 서비스 (댓글, 공지)
 
 import { supabase } from './supabase';
+import { getCurrentUser } from './auth';
 import type {
   Comment,
   Announcement,
@@ -16,10 +17,7 @@ import type {
  * 댓글 작성 (출석한 사용자만 가능)
  */
 export const createComment = async (request: CreateCommentRequest): Promise<Comment> => {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
+  const user = await getCurrentUser();
   if (!user) throw new Error('로그인이 필요합니다.');
 
   // 해당 날짜에 출석했는지 확인
@@ -69,9 +67,7 @@ export const createComment = async (request: CreateCommentRequest): Promise<Comm
  * 특정 날짜의 댓글 목록 가져오기
  */
 export const getDailyComments = async (studyId: string, date: string): Promise<DailyComments> => {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getCurrentUser();
 
   const { data: comments, error } = await supabase
     .from('comments')
@@ -123,10 +119,7 @@ export const getDailyComments = async (studyId: string, date: string): Promise<D
  * 댓글 수정
  */
 export const updateComment = async (commentId: string, updates: UpdateCommentRequest): Promise<Comment> => {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
+  const user = await getCurrentUser();
   if (!user) throw new Error('로그인이 필요합니다.');
 
   const { data, error } = await supabase
@@ -157,10 +150,7 @@ export const updateComment = async (commentId: string, updates: UpdateCommentReq
  * 댓글 삭제
  */
 export const deleteComment = async (commentId: string): Promise<void> => {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
+  const user = await getCurrentUser();
   if (!user) throw new Error('로그인이 필요합니다.');
 
   const { error } = await supabase.from('comments').delete().eq('id', commentId).eq('user_id', user.id); // 본인 댓글만 삭제 가능
@@ -172,10 +162,7 @@ export const deleteComment = async (commentId: string): Promise<void> => {
  * 공지사항 작성 (스터디 소유자만 가능)
  */
 export const createAnnouncement = async (request: CreateAnnouncementRequest): Promise<Announcement> => {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
+  const user = await getCurrentUser();
   if (!user) throw new Error('로그인이 필요합니다.');
 
   // 스터디 소유자 권한 확인
@@ -222,9 +209,7 @@ export const createAnnouncement = async (request: CreateAnnouncementRequest): Pr
  * 스터디 공지사항 목록 가져오기
  */
 export const getStudyAnnouncements = async (studyId: string): Promise<AnnouncementList> => {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getCurrentUser();
 
   const { data: announcements, error } = await supabase
     .from('announcements')
@@ -265,10 +250,7 @@ export const updateAnnouncement = async (
   announcementId: string,
   updates: UpdateAnnouncementRequest
 ): Promise<Announcement> => {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
+  const user = await getCurrentUser();
   if (!user) throw new Error('로그인이 필요합니다.');
 
   const { data, error } = await supabase
@@ -299,10 +281,7 @@ export const updateAnnouncement = async (
  * 공지사항 삭제
  */
 export const deleteAnnouncement = async (announcementId: string): Promise<void> => {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
+  const user = await getCurrentUser();
   if (!user) throw new Error('로그인이 필요합니다.');
 
   const { error } = await supabase.from('announcements').delete().eq('id', announcementId).eq('author_id', user.id); // 작성자만 삭제 가능
@@ -314,10 +293,7 @@ export const deleteAnnouncement = async (announcementId: string): Promise<void> 
  * 공지사항 고정/고정해제
  */
 export const toggleAnnouncementPin = async (announcementId: string): Promise<void> => {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
+  const user = await getCurrentUser();
   if (!user) throw new Error('로그인이 필요합니다.');
 
   // 현재 고정 상태 확인

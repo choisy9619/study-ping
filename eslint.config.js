@@ -55,7 +55,7 @@ export default tseslint.config(
       '@typescript-eslint/no-var-requires': 'off',
 
       // 일반 JavaScript/TypeScript 규칙
-      'no-console': ['warn', { allow: ['warn', 'error'] }],
+      'no-console': ['warn', { allow: ['log', 'warn', 'error', 'info'] }],
       'no-debugger': 'warn',
       'no-unused-expressions': 'off', // throw 문을 허용하기 위해 비활성화
       'prefer-const': 'error',

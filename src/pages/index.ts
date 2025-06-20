@@ -4,6 +4,7 @@ export { HomePage } from './HomePage';
 export { LoginPage } from './LoginPage';
 export { DashboardPage } from './DashboardPage';
 export { NotFoundPage } from './NotFoundPage';
+export { DevCheckPage } from './DevCheckPage';
 
 // 향후 추가될 페이지들
 // export { SignupPage } from './SignupPage'
