@@ -6,6 +6,9 @@ import { validateEnv, logEnvStatus } from './config/env';
 import { QueryProvider } from './providers/QueryProvider';
 import { AuthProvider } from './contexts/AuthContext';
 
+// 개발용 헬퍼 함수들 로드
+import('./utils/dev-helpers');
+
 // Validate environment variables before starting the app
 try {
   validateEnv();

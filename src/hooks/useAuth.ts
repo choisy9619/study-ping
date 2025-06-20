@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '../services';
+import { env } from '../config/env';
 import type { User, Session, AuthError } from '@supabase/supabase-js';
 
 // Auth 상태 타입 정의
@@ -66,15 +67,13 @@ export function useAuth(): AuthState {
   };
 }
 
-// 회원가입 훅
+// 회원가입 훅 (설정에 따라 이메일 인증 제어)
 export function useSignUp() {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async ({ email, password, name }: SignUpData) => {
-      if (import.meta.env.DEV) {
-        console.log('📝 회원가입 시도:', email);
-      }
+      console.log('📝 회원가입 시도:', email);
 
       const { data, error } = await supabase.auth.signUp({
         email,
@@ -82,16 +81,46 @@ export function useSignUp() {
         options: {
           data: {
             name,
-            email_verified: false,
+            email_verified: env.auth.skipEmailConfirmation, // 환경변수로 제어
           },
         },
       });
 
       if (error) throw error;
 
-      if (import.meta.env.DEV) {
-        console.log('✅ 회원가입 성공:', data.user?.email);
+      // 이메일 인증 건너뛰기가 활성화된 경우 처리
+      if (env.auth.skipEmailConfirmation && data.user) {
+        console.log('🔄 이메일 인증 건너뛰기 설정 활성화');
+
+        try {
+          // 이메일 인증 처리 함수 호출
+          const { data: confirmResult } = await supabase.rpc('confirm_user_email', {
+            user_email: email,
+          });
+
+          console.log('✅ 이메일 인증 완료:', confirmResult);
+
+          // 인증 후 자동 로그인 시도
+          console.log('🔄 자동 로그인 시도...');
+          const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
+            email,
+            password,
+          });
+
+          if (signInError) {
+            console.warn('⚠️ 자동 로그인 실패:', signInError.message);
+            return data; // 원래 회원가입 데이터 반환
+          } else {
+            console.log('✅ 자동 로그인 성공');
+            return { user: signInData.user, session: signInData.session };
+          }
+        } catch (confirmError) {
+          console.warn('⚠️ 이메일 인증 처리 실패:', confirmError);
+          return data; // 원래 회원가입 데이터 반환
+        }
       }
+
+      console.log('✅ 회원가입 성공:', data.user?.email);
       return data;
     },
     onSuccess: () => {

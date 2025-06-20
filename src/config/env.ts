@@ -8,6 +8,9 @@ export const env = {
     name: import.meta.env.VITE_APP_NAME || 'StudyPing',
     version: import.meta.env.VITE_APP_VERSION || '1.0.0',
   },
+  auth: {
+    skipEmailConfirmation: import.meta.env.VITE_SKIP_EMAIL_CONFIRMATION === 'true',
+  },
 } as const;
 
 // Validation function to ensure all required env vars are present
@@ -30,5 +33,6 @@ export function logEnvStatus() {
     console.log(`  App: ${env.app.name} v${env.app.version}`);
     console.log(`  Supabase URL: ${env.supabase.url ? '✅ Set' : '❌ Missing'}`);
     console.log(`  Supabase Key: ${env.supabase.anonKey ? '✅ Set' : '❌ Missing'}`);
+    console.log(`  Skip Email Confirmation: ${env.auth.skipEmailConfirmation ? '✅ Enabled' : '❌ Disabled'}`);
   }
 }
