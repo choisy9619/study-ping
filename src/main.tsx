@@ -4,6 +4,7 @@ import './index.css';
 import App from './App.tsx';
 import { validateEnv, logEnvStatus } from './config/env';
 import { QueryProvider } from './providers/QueryProvider';
+import { AuthProvider } from './contexts/AuthContext';
 
 // Validate environment variables before starting the app
 try {
@@ -17,7 +18,9 @@ try {
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <QueryProvider>
-      <App />
+      <AuthProvider>
+        <App />
+      </AuthProvider>
     </QueryProvider>
   </StrictMode>
 );

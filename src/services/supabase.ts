@@ -11,7 +11,9 @@ if (!supabaseUrl || !supabaseAnonKey) {
   throw new Error('Supabase URL과 Anon Key가 필요합니다. .env.local 파일을 확인해주세요.');
 }
 
-console.log('🔗 Supabase 클라이언트 초기화됨:', supabaseUrl);
+if (import.meta.env.DEV) {
+  console.log('🔗 Supabase 클라이언트 초기화됨:', supabaseUrl);
+}
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {

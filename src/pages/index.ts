@@ -3,6 +3,7 @@
 export { HomePage } from './HomePage';
 export { LoginPage } from './LoginPage';
 export { DashboardPage } from './DashboardPage';
+export { AuthCallbackPage } from './AuthCallbackPage';
 export { NotFoundPage } from './NotFoundPage';
 export { DevCheckPage } from './DevCheckPage';
 

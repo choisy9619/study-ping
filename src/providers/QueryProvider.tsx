@@ -1,5 +1,12 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import type { ReactNode } from 'react';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+
+// 에러 타입 정의
+interface ErrorWithStatus {
+  status?: number;
+  message?: string;
+}
 
 // Query Client 인스턴스 생성
 const queryClient = new QueryClient({
@@ -10,16 +17,17 @@ const queryClient = new QueryClient({
       // 네트워크 재연결 시 자동 refetch
       refetchOnWindowFocus: false,
       // 에러 시 재시도 설정
-      retry: (failureCount, error: any) => {
+      retry: (failureCount, error: unknown) => {
+        const typedError = error as ErrorWithStatus;
         // 인증 오류는 재시도하지 않음
-        if (error?.status === 401) return false;
+        if (typedError?.status === 401) return false;
         // 최대 3번 재시도
         return failureCount < 3;
       },
     },
     mutations: {
       // 뮤테이션 에러 처리
-      onError: (error: any) => {
+      onError: (error: unknown) => {
         console.error('Mutation error:', error);
       },
     },
@@ -34,12 +42,7 @@ export function QueryProvider({ children }: QueryProviderProps) {
   return (
     <QueryClientProvider client={queryClient}>
       {children}
-      {/* 개발 환경에서 React Query DevTools 추가 (선택사항) */}
-      {import.meta.env.DEV && (
-        <div style={{ fontSize: '12px', opacity: 0.7, position: 'fixed', bottom: 0, right: 0, padding: '8px' }}>
-          React Query Ready
-        </div>
-      )}
+      <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   );
 }
