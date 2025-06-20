@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import { useEffect, type ReactNode } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuthContext } from '../contexts/AuthContext';
 
@@ -7,8 +7,20 @@ interface ProtectedRouteProps {
 }
 
 export function ProtectedRoute({ children }: ProtectedRouteProps) {
-  const { isAuthenticated, isLoading } = useAuthContext();
+  const { isAuthenticated, isLoading, user } = useAuthContext();
   const location = useLocation();
+
+  // 디버깅용 로그
+  useEffect(() => {
+    if (import.meta.env.DEV) {
+      console.log('🛡️ ProtectedRoute 상태:', {
+        isAuthenticated,
+        isLoading,
+        user: user?.email || null,
+        path: location.pathname,
+      });
+    }
+  }, [isAuthenticated, isLoading, user, location.pathname]);
 
   // 로딩 중일 때는 로딩 화면 표시
   if (isLoading) {

@@ -51,20 +51,22 @@ export function LoginPage() {
       }
 
       try {
-        const result = await signUpMutation.mutateAsync({
+        await signUpMutation.mutateAsync({
           email: formData.email,
           password: formData.password,
           name: formData.name,
         });
 
-        // 개발 환경에서는 자동 로그인 시도
-        if (result.session) {
-          console.log('🎉 회원가입 및 자동 로그인 완료!');
-          navigate('/dashboard');
-        } else {
-          alert('회원가입이 완료되었습니다! 로그인해주세요.');
-          setMode('signin');
-        }
+        // 회원가입 성공 시 로그인 페이지로 이동
+        alert('회원가입이 완료되었습니다! 로그인해주세요.');
+        setMode('signin');
+
+        // 폼 초기화 (비밀번호 제외하고 이메일은 유지)
+        setFormData(prev => ({
+          ...prev,
+          password: '',
+          name: '',
+        }));
       } catch (_error) {
         // 에러는 뮤테이션에서 이미 로깅됨
       }

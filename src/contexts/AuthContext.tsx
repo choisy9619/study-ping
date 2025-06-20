@@ -29,9 +29,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
         isLoading: auth.isLoading,
         isAuthenticated: auth.isAuthenticated,
         user: auth.user?.email || null,
+        session: !!auth.session,
+        timestamp: new Date().toISOString(),
       });
     }
-  }, [auth.isLoading, auth.isAuthenticated, auth.user]);
+  }, [auth.isLoading, auth.isAuthenticated, auth.user, auth.session]);
 
   return <AuthContext.Provider value={auth}>{children}</AuthContext.Provider>;
 }

@@ -28,6 +28,7 @@ interface SignInData {
 // 메인 Auth 훅
 export function useAuth(): AuthState {
   const [isLoading, setIsLoading] = useState(true);
+  const queryClient = useQueryClient();
 
   const { data: authStatus } = useQuery({
     queryKey: ['auth-session'],
@@ -39,8 +40,9 @@ export function useAuth(): AuthState {
       if (error) throw error;
       return { session, user: session?.user || null };
     },
-    staleTime: 5 * 60 * 1000, // 5분
+    staleTime: 0, // 캐시 즉시 만료로 변경
     refetchOnWindowFocus: true,
+    refetchOnMount: true,
   });
 
   useEffect(() => {
@@ -51,13 +53,16 @@ export function useAuth(): AuthState {
       if (import.meta.env.DEV) {
         console.log('🔄 Auth 상태 변경:', event, session?.user?.email);
       }
+
+      // Auth 상태 변경 시 즉시 쿼리 무효화
+      queryClient.invalidateQueries({ queryKey: ['auth-session'] });
       setIsLoading(false);
     });
 
     setIsLoading(false);
 
     return () => subscription.unsubscribe();
-  }, []);
+  }, [queryClient]);
 
   return {
     user: authStatus?.user || null,
@@ -67,7 +72,7 @@ export function useAuth(): AuthState {
   };
 }
 
-// 회원가입 훅 (설정에 따라 이메일 인증 제어)
+// 회원가입 훅 (이메일 인증만 처리, 자동 로그인 제거)
 export function useSignUp() {
   const queryClient = useQueryClient();
 
@@ -81,42 +86,26 @@ export function useSignUp() {
         options: {
           data: {
             name,
-            email_verified: env.auth.skipEmailConfirmation, // 환경변수로 제어
+            email_verified: env.auth.skipEmailConfirmation,
           },
         },
       });
 
       if (error) throw error;
 
-      // 이메일 인증 건너뛰기가 활성화된 경우 처리
+      // 이메일 인증 건너뛰기가 활성화된 경우에만 이메일 인증 처리 (자동 로그인 제거)
       if (env.auth.skipEmailConfirmation && data.user) {
-        console.log('🔄 이메일 인증 건너뛰기 설정 활성화');
+        console.log('🔄 이메일 인증 처리 중...');
 
         try {
-          // 이메일 인증 처리 함수 호출
           const { data: confirmResult } = await supabase.rpc('confirm_user_email', {
             user_email: email,
           });
 
           console.log('✅ 이메일 인증 완료:', confirmResult);
-
-          // 인증 후 자동 로그인 시도
-          console.log('🔄 자동 로그인 시도...');
-          const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
-            email,
-            password,
-          });
-
-          if (signInError) {
-            console.warn('⚠️ 자동 로그인 실패:', signInError.message);
-            return data; // 원래 회원가입 데이터 반환
-          } else {
-            console.log('✅ 자동 로그인 성공');
-            return { user: signInData.user, session: signInData.session };
-          }
+          // 자동 로그인 제거 - 사용자가 직접 로그인하도록 함
         } catch (confirmError) {
           console.warn('⚠️ 이메일 인증 처리 실패:', confirmError);
-          return data; // 원래 회원가입 데이터 반환
         }
       }
 
@@ -124,7 +113,7 @@ export function useSignUp() {
       return data;
     },
     onSuccess: () => {
-      // Auth 상태 새로고침
+      // Auth 상태 새로고침 (자동 로그인되지 않도록)
       queryClient.invalidateQueries({ queryKey: ['auth-session'] });
     },
     onError: (error: AuthError) => {
@@ -185,6 +174,16 @@ export function useSignOut() {
     onSuccess: () => {
       // 모든 쿼리 캐시 초기화
       queryClient.clear();
+
+      // Auth 상태 즉시 무효화
+      queryClient.invalidateQueries({ queryKey: ['auth-session'] });
+
+      // 추가적인 쿼리 제거
+      queryClient.removeQueries();
+
+      if (import.meta.env.DEV) {
+        console.log('🧹 쿼리 캐시 초기화 완료');
+      }
     },
     onError: (error: AuthError) => {
       console.error('❌ 로그아웃 실패:', error.message);
